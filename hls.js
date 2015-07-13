@@ -1,36 +1,37 @@
-function extract_attributes(list){
-    var step = "key";
-    var attributes = {};
-    var key;
-    while(list.length > 0){
-        if(step == "key"){
-            key = list.substr(0, list.indexOf("="));
-            list = list.substr(key.length + 1);
-            step = "value";
-        }
-        else {
-            var value;
-            if(list[0] == '"'){
-                list = list.substr(1);
-                value = list.substr(0, list.indexOf('"'));
-                list = list.substr(value.length + 2);
+function hls(input){
+
+    function extract_attributes(list){
+        var step = "key";
+        var attributes = {};
+        var key;
+        while(list.length > 0){
+            if(step == "key"){
+                key = list.substr(0, list.indexOf("="));
+                list = list.substr(key.length + 1);
+                step = "value";
             }
             else {
-                var idx = list.indexOf(",");
-                if(idx == -1) idx = list.length;
-                value = list.substr(0, idx);
-                list = list.substr(value.length + 1);
-            }
-            attributes[key] = value;
+                var value;
+                if(list[0] == '"'){
+                    list = list.substr(1);
+                    value = list.substr(0, list.indexOf('"'));
+                    list = list.substr(value.length + 2);
+                }
+                else {
+                    var idx = list.indexOf(",");
+                    if(idx == -1) idx = list.length;
+                    value = list.substr(0, idx);
+                    list = list.substr(value.length + 1);
+                }
+                attributes[key] = value;
 
-            step = "key";
+                step = "key";
+            }
         }
+
+        return attributes;
     }
 
-    return attributes;
-}
-
-function hls(input){
     var out = {};
     var lines = input.split("\n");
     var sequence = 0;
