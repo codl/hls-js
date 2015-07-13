@@ -69,8 +69,21 @@ tap.test("hls", function(t){
 
         tt.equal(sliding.segments.low, 2680, "sets the lowest sequence number");
         tt.equal(sliding.segments.high, 2682, "sets the highest segment number");
+        tt.end();
     });
 
-    // t.test("given a variant playlist", function(tt){
+    t.test("given a variant playlist", function(tt){
+        var variant = hls(examples.variant);
+
+        tt.equal(variant.type, "variant", "has a variant type");
+
+        tt.equal(variant.playlists[0].url, "http://example.com/low.m3u8", "sets playlist urls");
+        tt.equal(variant.playlists[0].bandwidth, 1280000, "sets playlist bandwidths");
+        tt.equal(variant.playlists[0].program, 1, "sets playlist program ids");
+        tt.equal(variant.playlists[3].codecs, "mp4a.40.5", "sets playlist codecs");
+
+        tt.end();
+    });
+    t.end();
 });
 
