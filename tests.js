@@ -61,9 +61,9 @@ tap.test("hls", function(t){
         tt.equal(simple.segments[0].url, 'http://media.example.com/entire.ts', "sets segment urls");
         tt.equal(simple.segments[0].duration, 5220, "sets segment duration");
 
-        //var sliding = hls(examples.sliding);
+        var sliding = hls(examples.sliding);
 
-        //tt.equal(sliding.segments[2681].url, 'https://priv.example.com/fileSequence2681.ts', "with a sliding window, respects EXT-X-MEDIA-SEQUENCE");
+        tt.equal(sliding.segments[2680].url, 'https://priv.example.com/fileSequence2680.ts', "with a sliding window, respects EXT-X-MEDIA-SEQUENCE");
     });
 
     // t.test("given a variant playlist", function(tt){
