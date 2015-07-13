@@ -1,0 +1,11 @@
+{
+    "name": "hls",
+    "version": "0.0.0",
+    "description": "a library for parsing HTTP Live Streaming playlists",
+    "author": {
+        "name": "codl (Corentin Delcourt)",
+        "email": "codl@codl.fr"
+    },
+    "license": "Apache-2.0",
+    "private": "true"
+}
