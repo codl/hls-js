@@ -64,6 +64,9 @@ tap.test("hls", function(t){
         var sliding = hls(examples.sliding);
 
         tt.equal(sliding.segments[2680].url, 'https://priv.example.com/fileSequence2680.ts', "with a sliding window, respects EXT-X-MEDIA-SEQUENCE");
+
+        tt.equal(sliding.segments.low, 2680, "sets the lowest sequence number");
+        tt.equal(sliding.segments.high, 2682, "sets the highest segment number");
     });
 
     // t.test("given a variant playlist", function(tt){

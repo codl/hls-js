@@ -4,6 +4,7 @@ function hls(input){
     var sequence = 0;
 
     out.segments = [];
+    out.segments.low = 0;
 
     for(var i = 0; i < lines.length; i++){
         var line = lines[i].trim();
@@ -19,6 +20,7 @@ function hls(input){
 
         else if(line.startsWith("#EXT-X-MEDIA-SEQUENCE:")){
             sequence = line.substr("#EXT-X-MEDIA-SEQUENCE:".length) - 0;
+            out.segments.low = sequence;
         }
 
         else if(line.startsWith("#EXTINF:")){
@@ -28,6 +30,8 @@ function hls(input){
 
         else if(!line.startsWith("#") && line != ""){
             out.segments[sequence].url = line;
+            out.segments.high = sequence;
+
             sequence += 1;
         }
     }
