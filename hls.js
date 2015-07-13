@@ -28,6 +28,10 @@ function hls(input){
             out.segments[sequence] = { "duration": duration };
         }
 
+        else if(line.startsWith("#EXT-X-ENDLIST")){
+            out.ended = true;
+        }
+
         else if(!line.startsWith("#") && line != ""){
             out.segments[sequence].url = line;
             out.segments.high = sequence;
