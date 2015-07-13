@@ -95,6 +95,13 @@ tap.test("hls", function(t){
         tt.similar(extra.segments[0].time, new Date("2015-07-13T21:27:10+0200"), "should set segment times");
         tt.ok(extra.segments[1].discontinuous, "should set discontinuous segments");
 
+        var encrypted = hls(examples.encrypted);
+
+        tt.ok(!simple.segments[0].encrypted, "encrypted flag should be unset by default");
+        tt.ok(encrypted.segments[7795].encrypted, "should set the encrypted flag");
+        tt.equal(encrypted.segments[7795].key, "https://priv.example.com/key.php?r=52", "should set the key url");
+        tt.equal(encrypted.segments[7795].encryption_method, "AES-128", "should set the encryption method");
+
         tt.end();
     });
 

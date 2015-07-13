@@ -1,3 +1,33 @@
+function extract_attributes(list){
+    var step = "key";
+    var attributes = {};
+    var key;
+    while(list.length > 0){
+        if(step == "key"){
+            key = list.substr(0, list.indexOf("="));
+            list = list.substr(key.length + 1);
+            step = "value";
+        }
+        else {
+            var value;
+            if(list[0] == '"'){
+                list = list.substr(1);
+                value = list.substr(0, list.indexOf('"'));
+                list = list.substr(value.length + 2);
+            }
+            else {
+                value = list.substr(0, list.indexOf(","));
+                list = list.substr(value.length + 1);
+            }
+            attributes[key] = value;
+
+            step = "key";
+        }
+    }
+
+    return attributes;
+}
+
 function hls(input){
     var out = {};
     var lines = input.split("\n");
@@ -8,6 +38,8 @@ function hls(input){
 
     out.playlists = [];
     out.cacheable = true;
+
+    var enc = { METHOD: "NONE" }
 
     for(var i = 0; i < lines.length; i++){
         var line = lines[i].trim();
@@ -81,10 +113,19 @@ function hls(input){
             out.playlist_type = line.substr("#EXT-X-PLAYLIST-TYPE:".length);
         }
 
+        else if(line.startsWith("#EXT-X-KEY:")){
+            enc = extract_attributes(line.substr("#EXT-X-KEY:".length));
+        }
+
         else if(!line.startsWith("#") && line != ""){
             if(out.type == "media"){
                 out.segments[sequence].url = line;
                 out.segments.high = sequence;
+
+                out.segments[sequence].encryption_method = enc.METHOD;
+                out.segments[sequence].key = enc.URI || null;
+                out.segments[sequence].iv = enc.IV || null;
+                out.segments[sequence].encrypted = enc.METHOD != "NONE";
 
                 sequence += 1;
             }
