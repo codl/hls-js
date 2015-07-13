@@ -16,7 +16,9 @@ function extract_attributes(list){
                 list = list.substr(value.length + 2);
             }
             else {
-                value = list.substr(0, list.indexOf(","));
+                var idx = list.indexOf(",");
+                if(idx == -1) idx = list.length;
+                value = list.substr(0, idx);
                 list = list.substr(value.length + 1);
             }
             attributes[key] = value;
@@ -56,18 +58,16 @@ function hls(input){
         else if(line.startsWith("#EXT-X-STREAM-INF:")){
             out.type = "variant";
             var playlist = {};
-            var args = line.substr("#EXT-X-STREAM-INF:".length).split(",");
-            for(var j = 0; j < args.length; j++){
-                var key = args[j].split("=")[0];
-                var value = args[j].split("=")[1];
+            var attrs = extract_attributes(line.substr("#EXT-X-STREAM-INF:".length));
+            for(key in attrs){
                 if(key == "BANDWIDTH"){
-                    playlist.bandwidth = value - 0;
+                    playlist.bandwidth = attrs[key] - 0;
                 }
                 else if(key == "CODECS"){
-                    playlist.codecs = value.substr(1, value.length-2);
+                    playlist.codecs = attrs[key];
                 }
                 else if(key == "PROGRAM-ID"){
-                    playlist.program = value - 0;
+                    playlist.program = attrs[key] - 0;
                 }
             }
 
