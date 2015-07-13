@@ -50,6 +50,20 @@ tap.test("hls", function(t){
         '#EXT-X-STREAM-INF:PROGRAM-ID=1,BANDWIDTH=65000,CODECS="mp4a.40.5"\n' +
         'http://example.com/audio-only.m3u8\n';
 
+    examples.extra = '#EXTM3U\n' +
+        '#EXT-X-TARGETDURATION:60\n' +
+        '#EXT-X-ALLOW-CACHE:NO\n' +
+        '#EXT-X-PLAYLIST-TYPE:VOD\n' +
+        '#EXT-X-VERSION:3\n' +
+        '#EXT-X-PROGRAM-DATE-TIME:2015-07-13T21:27:10+0200\n' +
+        '#EXTINF:60,\n' +
+        'http://example.com/0.ts\n' +
+        '#EXT-X-DISCONTINUITY\n' +
+        '#EXT-X-PROGRAM-DATE-TIME:2015-07-13T21:34:09+0200\n' +
+        '#EXTINF:60,\n' +
+        'http://example.com/1.ts\n'
+
+
     t.throws(function() { hls(""); }, "expects an EXTM3U header");
 
     t.test("given a media playlist", function(tt){
@@ -69,6 +83,18 @@ tap.test("hls", function(t){
 
         tt.equal(sliding.segments.low, 2680, "sets the lowest sequence number");
         tt.equal(sliding.segments.high, 2682, "sets the highest segment number");
+
+        tt.ok(simple.cacheable, "should be cacheable by default");
+
+        var extra = hls(examples.extra);
+
+        tt.ok(!extra.cacheable, "should unset the cacheable flag");
+
+        tt.equal(extra.playlist_type, "VOD", "should set the playlist type");
+        tt.equal(extra.version, 3, "should set the version");
+        tt.similar(extra.segments[0].time, new Date("2015-07-13T21:27:10+0200"), "should set segment times");
+        tt.ok(extra.segments[1].discontinuous, "should set discontinuous segments");
+
         tt.end();
     });
 

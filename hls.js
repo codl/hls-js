@@ -7,6 +7,7 @@ function hls(input){
     out.segments.low = 0;
 
     out.playlists = [];
+    out.cacheable = true;
 
     for(var i = 0; i < lines.length; i++){
         var line = lines[i].trim();
@@ -48,11 +49,36 @@ function hls(input){
 
         else if(line.startsWith("#EXTINF:")){
             var duration = line.substr("#EXTINF:".length).split(",")[0] - 0;
-            out.segments[sequence] = { "duration": duration };
+            if(!out.segments[sequence]) out.segments[sequence] = {};
+            out.segments[sequence].duration = duration;
         }
 
-        else if(line.startsWith("#EXT-X-ENDLIST")){
+        else if(line == "#EXT-X-ENDLIST"){
             out.ended = true;
+        }
+
+        else if(line == "#EXT-X-DISCONTINUITY"){
+            if(!out.segments[sequence]) out.segments[sequence] = {};
+            out.segments[sequence].discontinuous = true;
+        }
+
+        else if(line.startsWith("#EXT-X-PROGRAM-DATE-TIME:")){
+            var date = line.substr("#EXT-X-PROGRAM-DATE-TIME:".length);
+
+            if(!out.segments[sequence]) out.segments[sequence] = {};
+            out.segments[sequence].time = new Date(date);
+        }
+
+        else if(line == "#EXT-X-ALLOW-CACHE:NO"){
+            out.cacheable = false;
+        }
+
+        else if(line.startsWith("#EXT-X-VERSION:")){
+            out.version = line.substr("#EXT-X-VERSION:".length) - 0;
+        }
+
+        else if(line.startsWith("#EXT-X-PLAYLIST-TYPE:")){
+            out.playlist_type = line.substr("#EXT-X-PLAYLIST-TYPE:".length);
         }
 
         else if(!line.startsWith("#") && line != ""){
