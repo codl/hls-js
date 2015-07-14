@@ -139,4 +139,6 @@ function hls(input){
     return out;
 }
 
-module.exports = hls;
+if(module) {
+    module.exports = hls;
+}
